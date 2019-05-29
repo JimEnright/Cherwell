@@ -1,0 +1,120 @@
+﻿<h1>Cherwell Candidate Coding Test</h1>
+<div class="spacing">
+    <p> <strong>Option 1:</strong>
+        The Web API call returns a base-64 string containing the image with two right triangles. The rows and columns are dynamically
+        inserted into the web page using <strong>javascript</strong>.
+    </p>
+
+    <div class="centered button">
+        <button id="option1Button">Click Here For Results</button>
+    </div>
+
+    <div id="option1" class="centered spacing"></div>
+</div>
+
+<div class="spacing">
+    <p> <strong>Option 2:</strong>
+        The Web API call returns a base-64 string containing the entire matrix of right triangles. The image is dynamically
+        inserted into the web page using <strong>javascript</strong>.
+    </p>
+
+    <div class="centered button">
+        <button id="option2Button">Click Here For Results</button>
+    </div>
+
+    <div id="option2" class="centered spacing"></div>
+</div>
+
+<div class="spacing">
+    <p> <strong>Option 3:</strong>
+        The Web API call returns a base-64 string array containing the right triangle and its inverted cousin. The rows and columns are dynamically
+        inserted into the web page using <strong>javascript</strong>. This solution uses the css declaration <strong>position:absolute</strong>
+        for positioning.
+    </p>
+
+    <div class="centered button">
+        <button id="option3Button">Click Here For Results</button>
+    </div>
+
+    <div id="option3" class="positioning centered spacing"></div>
+</div>
+
+<script type="text/javascript">
+    $().ready(function() {
+        $('#option1Button').click(function(event) { event.preventDefault(); ShowOption1($('#option1')); });
+        $('#option2Button').click(function(event) { event.preventDefault(); ShowOption2($('#option2')); });
+        $('#option3Button').click(function(event) { event.preventDefault(); ShowOption3($('#option3')); });
+    });
+
+    function ShowOption1(element)
+    {
+        $.ajax(
+        {
+            contentType: 'application/json',
+            type: 'get',
+            url: 'api/values/GetOption1',
+            success: function(result)
+            {
+                for(y = 0; y < 6; y++)
+                {
+                    var div = $('<div></div>');
+                    div.prop('id', 'row_'+String.fromCharCode('A'.charCodeAt(0)));
+                    div.prop('class', 'row');
+                    element.append(div);
+
+                    for(x = 0; x < 12; x = x + 2)
+                    {
+                        var img=$('<img/>');
+                        img.prop('id', 'element_' + (x+1) + '_' + (x+2));
+                        img.prop('src', result);
+                        img.appendTo(div);
+                    }
+                }
+            },
+            error: function(result) { alert(result.responseText); },
+        });
+    }
+
+    function ShowOption2(element)
+    {
+        $.ajax(
+        {
+            contentType: 'application/json',
+            type: 'get',
+            url: 'api/values/GetOption2',
+            success: function(result)
+            {
+                var img=$('<img/>');
+                img.prop('src', result);
+                img.appendTo(element);
+            },
+            error: function(result) { alert(result.responseText); },
+        });
+    }
+
+    function ShowOption3(element)
+    {
+        $.ajax(
+        {
+            contentType: 'application/json',
+            type: 'get',
+            url: 'api/values/GetOption3',
+            success: function(result)
+            {
+                for(y = 0; y < 6; y++)
+                {
+                    for(x = 0; x < 12; x++)
+                    {
+                        var img1 = $('<img/>');
+                        img1.prop('id','element_' + (x + 1));
+                        img1.prop('class', (x % 2) === 0 ? 'parent' : 'child');
+                        img1.attr('style', 'left: ' + (5 * (x % 2 === 0 ? x : x - 1)) + 'px; top: ' + (y * 10) + 'px;');
+                        img1.prop('src',result[(x % 2)]);
+                        img1.appendTo(element);
+                    }
+                }
+            },
+            error: function(result) { alert(result.responseText); },
+        });
+    }
+</script>
